@@ -22,6 +22,8 @@ module Slacken
     #
     # Returns a DocumentComponent.
     def build_document_component(node)
+      return if node.name == 'li' && node.children.empty?
+
       DocumentComponent.new(
         node.name.downcase,
         build_document_components_array(node.children),
@@ -37,7 +39,7 @@ module Slacken
     def build_document_components_array(node_set)
       node_set
         .reject { |node| node.respond_to?(:html_dtd?) && node.html_dtd? }
-        .map { |node| build_document_component(node) }
+        .filter_map { |node| build_document_component(node) }
     end
 
     def attrs_of(node)
